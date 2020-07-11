@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.text_show_uploads:
+                openImagesActivity();
                 break;
         }
     }
@@ -193,5 +194,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             Toast.makeText(this, "No file selected!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void openImagesActivity(){
+        Intent intent = new Intent(this,ImagesActivity.class);
+        startActivity(intent);
     }
 }
