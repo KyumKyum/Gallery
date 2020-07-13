@@ -1,8 +1,10 @@
 package com.example.proj_photouploading;
 
 import android.content.Context;
-import android.text.Layout;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -19,13 +21,15 @@ public class ImageViewAdapter extends RecyclerView.Adapter<ImageViewAdapter.Imag
 
     private Context mContext;
     private List<Upload> mUploads;
+    private OnItemClickListener mListener;
 
     public ImageViewAdapter(Context context, List<Upload> uploads){
         mContext = context;
         mUploads = uploads;
     }
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder{
+    public class ImageViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+    View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
         private TextView textViewName;
         private ImageView imageViewImage;
 
@@ -34,6 +38,54 @@ public class ImageViewAdapter extends RecyclerView.Adapter<ImageViewAdapter.Imag
 
             textViewName = itemView.findViewById(R.id.text_view_name);
             imageViewImage = itemView.findViewById(R.id.image_view_image);
+
+            imageViewImage.setOnClickListener(this);
+            imageViewImage.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(mListener != null){
+                int pos = getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION){
+                    mListener.OnItemClickListener(pos);
+                }
+            }
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.setHeaderTitle("Select");
+            MenuItem itemDownload = menu.add(Menu.NONE,1,1,"Download");
+            MenuItem itemDelete = menu.add(Menu.NONE,2,2,"Delete");
+
+            itemDownload.setOnMenuItemClickListener(this);
+            itemDelete.setOnMenuItemClickListener(this);
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            if(mListener != null){
+                int pos = getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION){
+
+                    switch (item.getItemId()){
+
+                        case 1:
+                            mListener.OnItemDownloadClickListener(pos);
+                            return true;
+
+                        case 2:
+                            mListener.OnItemDeleteClickListener(pos);
+                            return true;
+
+                    }
+
+                }
+            }
+
+            return true;
+
         }
     }
 
@@ -60,5 +112,17 @@ public class ImageViewAdapter extends RecyclerView.Adapter<ImageViewAdapter.Imag
     @Override
     public int getItemCount() {
         return mUploads.size();
+    }
+
+    public interface OnItemClickListener{
+
+        void OnItemClickListener(int position);
+        void OnItemDownloadClickListener(int position);
+        void OnItemDeleteClickListener(int position);
+
+    }
+
+    public void setOnClickListener(OnItemClickListener listener){
+        mListener = listener;
     }
 }

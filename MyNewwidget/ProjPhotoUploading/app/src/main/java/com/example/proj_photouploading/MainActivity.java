@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Toast
     private Toast mToast;
 
+    //Else
+    private String fileName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,8 +134,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void uploadFile() {
         if (mImageUri != null) { //User picked image
-            final StorageReference fileRef = mStorageRef.child(System.currentTimeMillis()
-                    + "." + getFileExtension(mImageUri)); //uploads/43542...... .jpg for example
+
+            fileName = System.currentTimeMillis() + "." + getFileExtension(mImageUri);
+            final StorageReference fileRef = mStorageRef.child(fileName); //uploads/43542...... .jpg for example
 
             mUploadTask = fileRef.putFile(mImageUri)
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -159,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                 Upload upload = new Upload(mEditTextFileName.getText().toString().trim(),
                                         downloadUri.toString());
+                                upload.setFileName(fileName);
 
                                 //Creates DB entry contains metadata of upload
                                 String uploadId = mDatabaseRef.push().getKey(); //Create new entry in DB, create unique id.
