@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,9 +22,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, ContentsAdapter.OnItemClickListener {
 
     private static final int WRITE_CONTENT = 101;
+    private static final String CUR_CONTENT = "currentcontent";
 
     private FloatingActionButton writeButton;
     private RecyclerView mRecyclerView;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mUploads = new ArrayList<>();
 
         mAdapter = new ContentsAdapter(this,mUploads);
+        mAdapter.setOnClickListener(this);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -88,7 +91,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == WRITE_CONTENT && resultCode == RESULT_OK){
-
+            Toast.makeText(this, "Uploaded!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void OnItemClickListener(int position) {
+        Intent intent = new Intent(getApplicationContext(),ShowContentsActivity.class);
+        Upload curUpload = mUploads.get(position);
+        String curTitle = curUpload.getTitle();
+        String curContent = curUpload.getContent();
+        intent.putExtra("title",curTitle);
+        intent.putExtra("content",curContent);
+        startActivity(intent);
     }
 }

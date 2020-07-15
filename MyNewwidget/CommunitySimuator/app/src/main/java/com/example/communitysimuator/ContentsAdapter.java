@@ -4,9 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ContentView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,22 +14,37 @@ import java.util.List;
 
 public class ContentsAdapter extends RecyclerView.Adapter<ContentsAdapter.ContentsViewHolder>{
 
-    public Context mContext;
-    public List<Upload> mUploads;
+    private Context mContext;
+    private List<Upload> mUploads;
+    private OnItemClickListener mListener;
+
 
     public ContentsAdapter (Context context, List<Upload> uploads){
         this.mContext = context;
         this.mUploads = uploads;
     }
 
-    public class ContentsViewHolder extends RecyclerView.ViewHolder {
+    public class ContentsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView mTextView;
+        public LinearLayout mLinearLayout;
 
         public ContentsViewHolder(@NonNull View itemView) {
             super(itemView);
 
             mTextView = itemView.findViewById(R.id.text_view_title_here);
+            mLinearLayout = itemView.findViewById(R.id.item_layout);
+            mLinearLayout.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(mListener != null){
+                int pos = getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION){
+                    mListener.OnItemClickListener(pos);
+                }
+            }
         }
     }
 
@@ -51,4 +66,13 @@ public class ContentsAdapter extends RecyclerView.Adapter<ContentsAdapter.Conten
     public int getItemCount() {
         return mUploads.size();
     }
+
+    public interface OnItemClickListener{
+        void OnItemClickListener(int position);
+    }
+
+    public void setOnClickListener(OnItemClickListener listener){
+        this.mListener = listener;
+    }
+
 }

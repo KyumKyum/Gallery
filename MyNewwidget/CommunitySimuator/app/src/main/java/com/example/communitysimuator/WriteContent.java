@@ -48,7 +48,6 @@ public class WriteContent extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                Toast.makeText(WriteContent.this, "Uploaded!", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent();
                                 setResult(Activity.RESULT_OK);
                                 finish();
