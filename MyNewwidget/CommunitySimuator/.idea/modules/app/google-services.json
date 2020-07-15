@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "304866999676",
+    "firebase_url": "https://community-simuator.firebaseio.com",
+    "project_id": "community-simuator",
+    "storage_bucket": "community-simuator.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304866999676:android:0cdcce0771f3544a84b8f9",
+        "android_client_info": {
+          "package_name": "com.example.communitysimuator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "304866999676-sjcab1gc6h89jve44fce2c6o4ao3q4pt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.communitysimuator",
+            "certificate_hash": "0deae5e04a65a2710a4e2f227f5f3448d9d70ec8"
+          }
+        },
+        {
+          "client_id": "304866999676-f0mg5u1l5ufsmcb5hi5jo08fra6ekd1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu0vRWPCoA8QkLHSFfEa6uAVoWCLkZGQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "304866999676-f0mg5u1l5ufsmcb5hi5jo08fra6ekd1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
