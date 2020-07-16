@@ -7,37 +7,49 @@
     android:layout_height="match_parent"
     tools:context=".WriteContent">
 
+    <ImageView
+        android:id="@+id/image_view_image_here"
+        android:layout_width="414dp"
+        android:layout_height="212dp"
+        android:layout_marginBottom="4dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_your_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
     <TextView
         android:id="@+id/text_view_your_title"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="232dp"
         android:text="Your Title Here"
-        android:textColor = "#000000"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id = "@+id/text_view_your_content"
+        android:id="@+id/text_view_your_content"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:background="@drawable/writing_space"
         android:layout_margin="20dp"
-        android:textSize="20sp"
-        android:text="Your Context Here"
-        android:textColor="#000000"
+        android:background="@drawable/writing_space"
         android:gravity="top"
         android:maxLength="150"
         android:padding="20dp"
+        android:text="Your Context Here"
+        android:textColor="#000000"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_view_your_title"
-        app:layout_constraintVertical_bias="0.186" />
-
+        app:layout_constraintVertical_bias="0.217" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

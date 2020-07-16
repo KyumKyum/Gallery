@@ -2,22 +2,30 @@ package com.example.communitysimuator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.os.storage.StorageManager;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView mRecyclerView;
     private ContentsAdapter mAdapter;
     private DatabaseReference mDBRef;
+    private FirebaseStorage mStorageRef;
     private ValueEventListener mValueListener;
 
     private List<Upload> mUploads;
@@ -54,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mRecyclerView.setAdapter(mAdapter);
 
+        mStorageRef = FirebaseStorage.getInstance();
         mDBRef = FirebaseDatabase.getInstance().getReference("Uploads");
 
         mValueListener = mDBRef.addValueEventListener(new ValueEventListener() {
@@ -101,5 +111,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Upload curUpload = mUploads.get(position);
         intent.putExtra(CUR_CONTENT,curUpload);
         startActivity(intent);
+    }
+
+    @Override
+    public void OnItemDeleteClickListener(int position) {
+
+        final int targetPos = position;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you going to delete this content?");
+        builder.setMessage("The result is not recoverable!");
+
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Upload target = mUploads.get(targetPos);
+                final String targetKey = target.getKey();
+
+                StorageReference targetRef = mStorageRef.getReferenceFromUrl(target.getImageUrl());
+
+                targetRef.delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mDBRef.child(targetKey).removeValue();
+                                Toast.makeText(MainActivity.this, "Successfully Deleted!", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }
