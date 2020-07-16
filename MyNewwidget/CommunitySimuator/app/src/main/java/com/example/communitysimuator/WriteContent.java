@@ -41,24 +41,28 @@ public class WriteContent extends AppCompatActivity {
                 String title = mTitle.getText().toString();
                 String content = mContent.getText().toString();
 
-                Upload upload = new Upload(title,content);
-                String uploadId = mDBRef.push().getKey();
+                if(title.trim().length() > 0 && content.trim().length() >0){
+                    Upload upload = new Upload(title,content);
+                    String uploadId = mDBRef.push().getKey();
 
-                mDBRef.child(uploadId).setValue(upload)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Intent intent = new Intent();
-                                setResult(Activity.RESULT_OK);
-                                finish();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(WriteContent.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    mDBRef.child(uploadId).setValue(upload)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Intent intent = new Intent();
+                                    setResult(Activity.RESULT_OK);
+                                    finish();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(WriteContent.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else{
+                    Toast.makeText(WriteContent.this, "You have to enter at least on character on title or context", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
