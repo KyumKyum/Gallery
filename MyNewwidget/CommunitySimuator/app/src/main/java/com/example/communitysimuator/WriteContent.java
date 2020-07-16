@@ -43,6 +43,8 @@ public class WriteContent extends AppCompatActivity {
     private EditText mContent;
     private Uri mImageUrl;
     private ProgressBar mProgressBar;
+    private Task<Uri> mUploadTask;
+    private Toast mToast;
     private Button submitButton;
 
     @Override
@@ -89,75 +91,81 @@ public class WriteContent extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String title = mTitle.getText().toString();
-                final String content = mContent.getText().toString();
 
-                if (title.trim().length() > 0 && content.trim().length() > 0) {
+                if (mUploadTask != null) {
+                    if(mToast != null) mToast.cancel();
 
-                    if (mImageUrl != null) {
-                        //Saving Imagefile in Storage
-                        final String fileName = System.currentTimeMillis() + "." + getFileExtension(mImageUrl);
-                        final StorageReference fileRef = mStorageRef.child(fileName.trim());
-
-                        fileRef.putFile(mImageUrl)
-                                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                        mProgressBar.setVisibility(View.VISIBLE);
-                                        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                                    }
-                                })
-                                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                    @Override
-                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                        if (!task.isSuccessful()) {
-                                            throw task.getException();
-                                        } else {
-                                            return fileRef.getDownloadUrl();
-                                        }
-                                    }
-                                })
-                                .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        //Saving Image file Complete; Saving content information in DB
-                                        if (task.isSuccessful()) {
-
-
-                                            String uploadId = mDBRef.push().getKey();
-
-                                            Uri downloadUri = task.getResult();
-                                            Upload upload = new Upload(title, content, downloadUri.toString());
-                                            upload.setKey(uploadId);
-                                            mDBRef.child(uploadId).setValue(upload);
-                                        }
-                                    }
-                                })
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        Intent intent = new Intent();
-                                        setResult(Activity.RESULT_OK);
-                                        finish();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(WriteContent.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        Toast.makeText(WriteContent.this, "You didn't uploaded any image file.", Toast.LENGTH_SHORT).show();
-                    }
+                    mToast = Toast.makeText(WriteContent.this, "Uploading is on progress!", Toast.LENGTH_SHORT);
+                    mToast.show();
                 } else {
-                    Toast.makeText(WriteContent.this, "You have to enter at least on character on title or context.", Toast.LENGTH_SHORT).show();
+                    final String title = mTitle.getText().toString();
+                    final String content = mContent.getText().toString();
+
+                    if (title.trim().length() > 0 && content.trim().length() > 0) {
+
+                        if (mImageUrl != null) {
+                            //Saving Imagefile in Storage
+                            final String fileName = System.currentTimeMillis() + "." + getFileExtension(mImageUrl);
+                            final StorageReference fileRef = mStorageRef.child(fileName.trim());
+
+                            mUploadTask = fileRef.putFile(mImageUrl)
+                                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                            mProgressBar.setVisibility(View.VISIBLE);
+                                            //getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                                        }
+                                    })
+                                    .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                        @Override
+                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                            if (!task.isSuccessful()) {
+                                                throw task.getException();
+                                            } else {
+                                                return fileRef.getDownloadUrl();
+                                            }
+                                        }
+                                    })
+                                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task) {
+                                            //Saving Image file Complete; Saving content information in DB
+                                            if (task.isSuccessful()) {
+
+
+                                                String uploadId = mDBRef.push().getKey();
+
+                                                Uri downloadUri = task.getResult();
+                                                Upload upload = new Upload(title, content, downloadUri.toString());
+                                                upload.setKey(uploadId);
+                                                mDBRef.child(uploadId).setValue(upload);
+                                            }
+                                        }
+                                    })
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            Intent intent = new Intent();
+                                            setResult(Activity.RESULT_OK);
+                                            finish();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(WriteContent.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(WriteContent.this, "You didn't uploaded any image file.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(WriteContent.this, "You have to enter at least on character on title or context.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-        });
-
+            });
     }
-
     private String getFileExtension(Uri imageUri) {
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
