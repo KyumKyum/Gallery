@@ -1,6 +1,9 @@
 package com.example.communitysimuator;
 
-public class Upload {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Upload implements Parcelable {
 
     private String title;
     private String content;
@@ -13,6 +16,23 @@ public class Upload {
         this.title = title;
         this.content = content;
     }
+
+    protected Upload(Parcel in) {
+        title = in.readString();
+        content = in.readString();
+    }
+
+    public static final Creator<Upload> CREATOR = new Creator<Upload>() {
+        @Override
+        public Upload createFromParcel(Parcel in) {
+            return new Upload(in);
+        }
+
+        @Override
+        public Upload[] newArray(int size) {
+            return new Upload[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -28,5 +48,16 @@ public class Upload {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(content);
     }
 }

@@ -21,13 +21,12 @@ public class ShowContentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_contents);
 
         Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-        String content = intent.getStringExtra("content");
+        Upload curUpload = intent.getParcelableExtra(CUR_CONTENT);
 
         yourTitle = findViewById(R.id.text_view_your_title);
+        yourTitle.setText(curUpload.getTitle());
         yourContent = findViewById(R.id.text_view_your_content);
+        yourContent.setText(curUpload.getContent());
 
-        yourTitle.setText(title);
-        yourContent.setText(content);
     }
 }

@@ -99,10 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void OnItemClickListener(int position) {
         Intent intent = new Intent(getApplicationContext(),ShowContentsActivity.class);
         Upload curUpload = mUploads.get(position);
-        String curTitle = curUpload.getTitle();
-        String curContent = curUpload.getContent();
-        intent.putExtra("title",curTitle);
-        intent.putExtra("content",curContent);
+        intent.putExtra(CUR_CONTENT,curUpload);
         startActivity(intent);
     }
 }
